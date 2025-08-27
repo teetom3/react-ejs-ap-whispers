@@ -9,8 +9,11 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Trigger Render Deployment
-        env:
-          RENDER_DEPLOY_HOOK_URL: ${{ secrets.RENDER.DEPLOY_HOOK }}
-        run: |
-          curl -X POST "$RENDER_DEPLOY_HOOK_URL"
+      - name: Copy files to server
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.SERVER_IP }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          source: "./*"
+          target: "/var/www/html/thomas-whispers"
