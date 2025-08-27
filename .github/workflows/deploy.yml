@@ -1,4 +1,4 @@
-name: Deploy to Render
+name: Deploy to VPS
 
 on:
   push:
@@ -20,3 +20,25 @@ jobs:
           key: ${{ secrets.SERVER_SSH_KEY }}
           source: "./*"
           target: "/var/www/html/thomas-whispers"
+          
+      - name: Deploy with PM2
+        uses: appleboy/ssh-action@v0.1.7
+        with:
+          host: ${{ secrets.SERVER_IP }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          script: |
+            cd /var/www/html/thomas-whispers
+            npm install --production
+            mkdir -p logs
+            
+            # Vérifier si l'app PM2 existe déjà
+            if pm2 describe whispering-app > /dev/null 2>&1; then
+              echo "App exists, reloading..."
+              pm2 reload ecosystem.config.js
+            else
+              echo "App doesn't exist, starting..."
+              pm2 start ecosystem.config.js
+            fi
+            
+            pm2 save
