@@ -6,11 +6,11 @@ on:
       - main
       
 jobs:
-   deploy:
-     runs-on: ubuntu-latest
-     steps:
-        - name: Trigger Render Deployment
-          env:
-            RENDER_DEPLOY_HOOK_URL: ${{ secrets.RENDER.DEPLOY_HOOK }}
-          run: |
-            curl -X POST "$RENDER_DEPLOY_HOOK_URL"
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Render Deployment
+        env:
+          RENDER_DEPLOY_HOOK_URL: ${{ secrets.RENDER_DEPLOY_HOOK }}
+        run: |
+          curl -X POST "$RENDER_DEPLOY_HOOK_URL"
